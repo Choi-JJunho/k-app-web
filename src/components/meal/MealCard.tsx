@@ -30,9 +30,6 @@ export default function MealCard({ meal }: MealCardProps) {
               ]
             }
           </h2>
-          <span className="text-sm opacity-90">
-            {new Date(meal.date).toLocaleDateString("ko-KR")}
-          </span>
         </div>
         <div className="flex gap-2 text-xs flex-wrap">
           <span className="bg-white/20 px-2 py-1 rounded-lg flex items-center gap-1">

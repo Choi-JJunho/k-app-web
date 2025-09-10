@@ -11,16 +11,16 @@ export default function MealFilters({
   selectedDate,
   selectedTime,
   onDateChange,
-  onTimeChange
+  onTimeChange,
 }: MealFiltersProps) {
   const diningTimeLabels = {
     breakfast: "조식",
-    lunch: "중식", 
-    dinner: "석식"
+    lunch: "중식",
+    dinner: "석식",
   };
 
   return (
-    <>        
+    <>
       {/* Date Selector */}
       <div className="mb-4">
         <CustomDatePicker
@@ -42,7 +42,9 @@ export default function MealFilters({
         >
           전체
         </button>
-        {(Object.keys(diningTimeLabels) as Array<keyof typeof diningTimeLabels>).map((time) => (
+        {(
+          Object.keys(diningTimeLabels) as Array<keyof typeof diningTimeLabels>
+        ).map((time) => (
           <button
             key={time}
             onClick={() => onTimeChange(time)}

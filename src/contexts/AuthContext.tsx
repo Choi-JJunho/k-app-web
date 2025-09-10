@@ -43,15 +43,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       // TODO: 실제 API 호출로 대체
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 로딩 시뮬레이션
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // 로딩 시뮬레이션
+
       const mockUser: User = {
         id: "1",
         name: "홍길동",
         email: email,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent("홍길동")}&background=fb923c&color=fff`
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          "홍길동"
+        )}&background=fb923c&color=fff`,
       };
-      
+
       setUser(mockUser);
       localStorage.setItem("user", JSON.stringify(mockUser));
     } catch (error) {

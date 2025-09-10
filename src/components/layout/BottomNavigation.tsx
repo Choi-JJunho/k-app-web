@@ -14,20 +14,20 @@ const navItems: NavItem[] = [
     href: "/",
     icon: "🍱",
     activeIcon: "🍱",
-    label: "식단"
+    label: "식단",
   },
   {
     href: "/nutrition",
     icon: "📊",
-    activeIcon: "📊", 
-    label: "영양정보"
+    activeIcon: "📊",
+    label: "영양정보",
   },
   {
     href: "/profile",
     icon: "👤",
     activeIcon: "👤",
-    label: "프로필"
-  }
+    label: "프로필",
+  },
 ];
 
 export default function BottomNavigation() {
@@ -43,8 +43,8 @@ export default function BottomNavigation() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all ${
-                isActive 
-                  ? "text-orange-600 bg-orange-50" 
+                isActive
+                  ? "text-orange-600 bg-orange-50"
                   : "text-gray-600 hover:text-orange-600"
               }`}
             >

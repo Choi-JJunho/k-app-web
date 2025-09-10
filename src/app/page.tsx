@@ -47,9 +47,6 @@ export default function Home() {
                   <h1 className="text-2xl font-bold text-gray-800">
                     🍱 오늘의 식단
                   </h1>
-                  <div className="text-sm text-gray-600">
-                    안녕하세요, {user.name}님!
-                  </div>
                 </div>
 
                 <MealFilters

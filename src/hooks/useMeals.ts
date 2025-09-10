@@ -29,7 +29,7 @@ export function useMeals(date: string): UseMealsReturn {
     setError(null);
 
     try {
-      const response = await fetch(`/api/meals?date=${date}`);
+      const response = await fetch(`http://localhost:8080/api/meals?date=${date}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

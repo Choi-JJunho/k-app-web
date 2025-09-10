@@ -17,7 +17,9 @@ interface NutritionData {
 
 export default function NutritionPage() {
   const { user } = useAuth();
-  const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">("week");
+  const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">(
+    "week"
+  );
   const [nutritionData, setNutritionData] = useState<NutritionData[]>([]);
 
   // Mock data - 실제로는 API에서 가져와야 함
@@ -26,33 +28,36 @@ export default function NutritionPage() {
       {
         date: "2025-01-01",
         totalCalories: 2245,
-        meals: { breakfast: 0, lunch: 885, dinner: 880 }
+        meals: { breakfast: 0, lunch: 885, dinner: 880 },
       },
       {
         date: "2025-01-02",
         totalCalories: 2536,
-        meals: { breakfast: 780, lunch: 878, dinner: 878 }
+        meals: { breakfast: 780, lunch: 878, dinner: 878 },
       },
       {
         date: "2025-01-03",
         totalCalories: 2546,
-        meals: { breakfast: 782, lunch: 881, dinner: 881 }
+        meals: { breakfast: 782, lunch: 881, dinner: 881 },
       },
       {
         date: "2025-01-04",
         totalCalories: 1748,
-        meals: { breakfast: 0, lunch: 883, dinner: 884 }
+        meals: { breakfast: 0, lunch: 883, dinner: 884 },
       },
       {
         date: "2025-01-05",
         totalCalories: 1754,
-        meals: { breakfast: 0, lunch: 877, dinner: 877 }
-      }
+        meals: { breakfast: 0, lunch: 877, dinner: 877 },
+      },
     ];
     setNutritionData(mockData);
   }, []);
 
-  const totalWeekCalories = nutritionData.reduce((sum, day) => sum + day.totalCalories, 0);
+  const totalWeekCalories = nutritionData.reduce(
+    (sum, day) => sum + day.totalCalories,
+    0
+  );
   const avgDailyCalories = Math.round(totalWeekCalories / nutritionData.length);
   const recommendedCalories = 2200; // 권장 칼로리
 
@@ -75,7 +80,7 @@ export default function NutritionPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <Header />
-      
+
       <main className="pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto p-4">
           {/* Header */}
@@ -112,7 +117,9 @@ export default function NutritionPage() {
                 <h3 className="text-sm font-medium text-gray-600">일일 평균</h3>
                 <span className="text-2xl">🔥</span>
               </div>
-              <p className="text-2xl font-bold text-orange-600">{avgDailyCalories}</p>
+              <p className="text-2xl font-bold text-orange-600">
+                {avgDailyCalories}
+              </p>
               <p className="text-xs text-gray-500">kcal/일</p>
             </div>
 
@@ -132,21 +139,25 @@ export default function NutritionPage() {
                 <h3 className="text-sm font-medium text-gray-600">총 섭취</h3>
                 <span className="text-2xl">📈</span>
               </div>
-              <p className="text-2xl font-bold text-green-600">{totalWeekCalories.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-green-600">
+                {totalWeekCalories.toLocaleString()}
+              </p>
               <p className="text-xs text-gray-500">kcal (주간)</p>
             </div>
           </div>
 
           {/* 일일 칼로리 차트 */}
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">일일 칼로리 추이</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              일일 칼로리 추이
+            </h2>
             <div className="space-y-4">
               {nutritionData.map((day, index) => (
                 <div key={day.date} className="flex items-center space-x-4">
                   <div className="w-16 text-sm text-gray-600 font-medium">
-                    {new Date(day.date).toLocaleDateString("ko-KR", { 
-                      month: "short", 
-                      day: "numeric" 
+                    {new Date(day.date).toLocaleDateString("ko-KR", {
+                      month: "short",
+                      day: "numeric",
                     })}
                   </div>
                   <div className="flex-1">
@@ -158,35 +169,44 @@ export default function NutritionPage() {
                         <div
                           className="bg-gradient-to-r from-orange-400 to-red-400 h-2 rounded-full transition-all duration-500"
                           style={{
-                            width: `${Math.min((day.totalCalories / recommendedCalories) * 100, 100)}%`
+                            width: `${Math.min(
+                              (day.totalCalories / recommendedCalories) * 100,
+                              100
+                            )}%`,
                           }}
                         />
                       </div>
                     </div>
                     <div className="flex gap-1">
                       {day.meals.breakfast > 0 && (
-                        <div 
+                        <div
                           className="bg-blue-300 h-1 rounded"
                           style={{
-                            width: `${(day.meals.breakfast / day.totalCalories) * 100}%`
+                            width: `${
+                              (day.meals.breakfast / day.totalCalories) * 100
+                            }%`,
                           }}
                           title={`조식: ${day.meals.breakfast}kcal`}
                         />
                       )}
                       {day.meals.lunch > 0 && (
-                        <div 
+                        <div
                           className="bg-orange-300 h-1 rounded"
                           style={{
-                            width: `${(day.meals.lunch / day.totalCalories) * 100}%`
+                            width: `${
+                              (day.meals.lunch / day.totalCalories) * 100
+                            }%`,
                           }}
                           title={`중식: ${day.meals.lunch}kcal`}
                         />
                       )}
                       {day.meals.dinner > 0 && (
-                        <div 
+                        <div
                           className="bg-purple-300 h-1 rounded"
                           style={{
-                            width: `${(day.meals.dinner / day.totalCalories) * 100}%`
+                            width: `${
+                              (day.meals.dinner / day.totalCalories) * 100
+                            }%`,
                           }}
                           title={`석식: ${day.meals.dinner}kcal`}
                         />
@@ -196,7 +216,7 @@ export default function NutritionPage() {
                 </div>
               ))}
             </div>
-            
+
             <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-blue-300 rounded"></div>
@@ -215,7 +235,9 @@ export default function NutritionPage() {
 
           {/* 영양 성분 분석 */}
           <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">영양성분 분석</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              영양성분 분석
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 bg-red-50 rounded-xl">
                 <div className="text-2xl mb-2">🍖</div>
@@ -243,7 +265,8 @@ export default function NutritionPage() {
                 <h3 className="font-semibold text-green-800">영양 팁</h3>
               </div>
               <p className="text-sm text-green-700">
-                단백질 섭취가 조금 부족합니다. 육류나 두부 요리를 더 드시는 것을 권장합니다.
+                단백질 섭취가 조금 부족합니다. 육류나 두부 요리를 더 드시는 것을
+                권장합니다.
               </p>
             </div>
           </div>
