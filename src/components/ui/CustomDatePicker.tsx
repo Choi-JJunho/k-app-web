@@ -9,12 +9,20 @@ interface CustomDatePickerProps {
   value: string;
   onChange: (date: string) => void;
   placeholder?: string;
+  disabled?: boolean;
+  startMonth?: Date;
+  endMonth?: Date;
+  disableNavigation?: boolean;
 }
 
 export default function CustomDatePicker({
   value,
   onChange,
   placeholder = "날짜를 선택하세요",
+  disabled = false,
+  startMonth,
+  endMonth,
+  disableNavigation = false,
 }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -37,7 +45,16 @@ export default function CustomDatePicker({
   };
 
   const handleInputClick = () => {
-    setIsOpen(!isOpen);
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const handleTodayClick = () => {
+    const today = new Date();
+    setSelectedDate(today);
+    onChange(format(today, "yyyy-MM-dd"));
+    setIsOpen(false);
   };
 
   const displayValue = selectedDate
@@ -65,8 +82,13 @@ export default function CustomDatePicker({
         value={displayValue}
         placeholder={placeholder}
         onClick={handleInputClick}
+        disabled={disabled}
         readOnly
-        className="w-full p-3 rounded-xl border-2 border-orange-200 focus:border-orange-400 focus:outline-none text-center font-medium bg-white text-gray-700 placeholder-gray-400 cursor-pointer"
+        className={`w-full p-3 rounded-xl border-2 focus:outline-none text-center font-medium transition-all ${
+          disabled
+            ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+            : "border-orange-200 focus:border-orange-400 bg-white text-gray-700 cursor-pointer hover:border-orange-300"
+        } placeholder-gray-400`}
       />
 
       {isOpen && (
@@ -77,8 +99,14 @@ export default function CustomDatePicker({
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
+              defaultMonth={selectedDate || new Date()}
+              startMonth={startMonth}
+              endMonth={endMonth}
+              disableNavigation={disableNavigation}
               locale={ko}
               className="rdp-custom"
+              weekStartsOn={1}
+              autoFocus
               styles={{
                 root: { width: "100%" },
                 month: { width: "100%" },
@@ -87,6 +115,14 @@ export default function CustomDatePicker({
                 week: { width: "100%" },
               }}
             />
+            <div className="flex justify-center pt-3 border-t border-gray-100">
+              <button
+                onClick={handleTodayClick}
+                className="px-4 py-2 text-sm font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 hover:border-orange-300 transition-all focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              >
+                오늘
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -157,6 +193,28 @@ export default function CustomDatePicker({
           font-weight: 500;
           color: #6b7280;
           padding: 8px;
+        }
+        .rdp-custom .rdp-month_caption {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 8px 0;
+          position: relative;
+        }
+        .rdp-custom .rdp-nav {
+          position: relative;
+
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          pointer-events: none;
+        }
+        .rdp-custom .rdp-button_next {
+          pointer-events: all;
+        }
+        .rdp-custom .rdp-button_previous {
+          pointer-events: all;
         }
       `}</style>
     </div>
