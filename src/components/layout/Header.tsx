@@ -26,9 +26,6 @@ export default function Header() {
             <a href="/nutrition" className="text-gray-600 hover:text-orange-600 transition-colors">
               영양정보
             </a>
-            <a href="/favorites" className="text-gray-600 hover:text-orange-600 transition-colors">
-              즐겨찾기
-            </a>
           </nav>
 
           {/* User Menu */}

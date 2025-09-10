@@ -23,12 +23,6 @@ const navItems: NavItem[] = [
     label: "영양정보"
   },
   {
-    href: "/favorites",
-    icon: "❤️",
-    activeIcon: "❤️",
-    label: "즐겨찾기"
-  },
-  {
     href: "/profile",
     icon: "👤",
     activeIcon: "👤",
