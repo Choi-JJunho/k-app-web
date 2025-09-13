@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface NavItem {
   href: string;
@@ -31,7 +32,8 @@ const navItems: NavItem[] = [
 ];
 
 export default function BottomNavigation() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden">
@@ -39,9 +41,9 @@ export default function BottomNavigation() {
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <a
+            <Link
               key={item.href}
-              href={item.href}
+              to={item.href}
               className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all ${
                 isActive
                   ? "text-orange-600 bg-orange-50"
@@ -52,7 +54,7 @@ export default function BottomNavigation() {
                 {isActive && item.activeIcon ? item.activeIcon : item.icon}
               </span>
               <span className="text-xs font-medium">{item.label}</span>
-            </a>
+            </Link>
           );
         })}
       </div>

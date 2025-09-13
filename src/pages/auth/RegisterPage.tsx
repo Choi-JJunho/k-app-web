@@ -1,12 +1,11 @@
-"use client";
-
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    emailPrefix: "",
     password: "",
     confirmPassword: "",
     studentId: "",
@@ -15,6 +14,7 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
 
   const departments = [
     "컴퓨터공학부",
@@ -51,10 +51,10 @@ export default function RegisterPage() {
       newErrors.name = "이름을 입력해주세요.";
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = "이메일을 입력해주세요.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "올바른 이메일 형식을 입력해주세요.";
+    if (!formData.emailPrefix.trim()) {
+      newErrors.emailPrefix = "사용자명을 입력해주세요.";
+    } else if (!/^[a-zA-Z0-9._-]+$/.test(formData.emailPrefix)) {
+      newErrors.emailPrefix = "영문, 숫자, ., _, - 만 사용 가능합니다.";
     }
 
     if (!formData.password) {
@@ -103,10 +103,18 @@ export default function RegisterPage() {
     setErrors({});
 
     try {
+      // 전체 이메일 생성
+      const fullEmail = `${formData.emailPrefix}@koreatech.ac.kr`;
+      const registrationData = {
+        ...formData,
+        email: fullEmail,
+      };
+
+      // 실제 API 호출 시 registrationData 사용
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
-      window.location.href = "/auth/login";
+      navigate("/auth/login");
     } catch (err) {
       setErrors({
         general: "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.",
@@ -191,26 +199,35 @@ export default function RegisterPage() {
 
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="emailPrefix"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  이메일
+                  학교 이메일
                 </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`w-full p-3 border-2 rounded-xl focus:outline-none transition-colors ${
-                    errors.email
-                      ? "border-red-300 focus:border-red-400"
-                      : "border-gray-200 focus:border-orange-400"
-                  }`}
-                  placeholder="이메일을 입력하세요"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <div className="relative">
+                  <input
+                    id="emailPrefix"
+                    name="emailPrefix"
+                    type="text"
+                    value={formData.emailPrefix}
+                    onChange={handleInputChange}
+                    className={`w-full p-3 pr-40 border-2 rounded-xl focus:outline-none transition-colors ${
+                      errors.emailPrefix
+                        ? "border-red-300 focus:border-red-400"
+                        : "border-gray-200 focus:border-orange-400"
+                    }`}
+                    placeholder="사용자명"
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <span className="text-gray-500 text-sm">
+                      @koreatech.ac.kr
+                    </span>
+                  </div>
+                </div>
+                {errors.emailPrefix && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.emailPrefix}
+                  </p>
                 )}
               </div>
 
@@ -367,12 +384,12 @@ export default function RegisterPage() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             이미 계정이 있으신가요?{" "}
-            <a
-              href="/auth/login"
+            <Link
+              to="/auth/login"
               className="text-orange-600 hover:text-orange-700 font-medium"
             >
               로그인
-            </a>
+            </Link>
           </p>
         </div>
 

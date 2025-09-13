@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
@@ -20,18 +21,18 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="text-gray-600 hover:text-orange-600 transition-colors"
             >
               식단
-            </a>
-            <a
-              href="/nutrition"
+            </Link>
+            <Link
+              to="/nutrition"
               className="text-gray-600 hover:text-orange-600 transition-colors"
             >
               영양정보
-            </a>
+            </Link>
           </nav>
 
           {/* User Menu */}
@@ -67,18 +68,18 @@ export default function Header() {
 
                 {isMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2">
-                    <a
-                      href="/profile"
+                    <Link
+                      to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       프로필
-                    </a>
-                    <a
-                      href="/settings"
+                    </Link>
+                    <Link
+                      to="/settings"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       설정
-                    </a>
+                    </Link>
                     <hr className="my-1 border-gray-100" />
                     <button
                       onClick={logout}
@@ -90,12 +91,12 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <a
-                href="/auth/login"
+              <Link
+                to="/auth/login"
                 className="px-4 py-2 bg-orange-400 text-white rounded-xl font-medium hover:bg-orange-500 transition-colors"
               >
                 로그인
-              </a>
+              </Link>
             )}
 
             {/* Mobile menu button */}

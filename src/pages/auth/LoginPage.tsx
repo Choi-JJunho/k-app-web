@@ -1,14 +1,14 @@
-"use client";
-
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
-export default function LoginForm() {
+export default function LoginPage() {
   const [emailPrefix, setEmailPrefix] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ export default function LoginForm() {
 
     try {
       await login(fullEmail, password);
-      window.location.href = "/"; // 로그인 후 메인 페이지로 리다이렉트
+      navigate("/"); // 로그인 후 메인 페이지로 리다이렉트
     } catch (err) {
       setError(err instanceof Error ? err.message : "로그인에 실패했습니다.");
     }
@@ -102,12 +102,12 @@ export default function LoginForm() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             계정이 없으신가요?{" "}
-            <a
-              href="/auth/register"
+            <Link
+              to="/auth/register"
               className="text-orange-600 hover:text-orange-700 font-medium"
             >
               회원가입
-            </a>
+            </Link>
           </p>
         </div>
       </div>
