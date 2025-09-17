@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { authApi } from "@/lib/api";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -106,18 +107,21 @@ export default function RegisterPage() {
       // 전체 이메일 생성
       const fullEmail = `${formData.emailPrefix}@koreatech.ac.kr`;
       const registrationData = {
-        ...formData,
+        name: formData.name,
         email: fullEmail,
+        password: formData.password,
+        studentId: formData.studentId,
+        department: formData.department,
       };
 
-      // 실제 API 호출 시 registrationData 사용
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await authApi.register(registrationData);
 
       alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
       navigate("/auth/login");
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "회원가입 중 오류가 발생했습니다.";
       setErrors({
-        general: "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.",
+        general: errorMessage,
       });
     } finally {
       setIsLoading(false);

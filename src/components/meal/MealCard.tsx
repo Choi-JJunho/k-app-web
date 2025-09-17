@@ -1,11 +1,4 @@
-interface Meal {
-  date: string;
-  dining_time: string;
-  place: string;
-  price: string;
-  kcal: string;
-  menu: string[];
-}
+import { type Meal } from "@/lib/api";
 
 interface MealCardProps {
   meal: Meal;

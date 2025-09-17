@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# K-Food 앱
 
-## Getting Started
+한국기술교육대학교 식단 정보 시스템
 
-First, run the development server:
+## 기술 스택
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend**: React 19, TypeScript, Vite
+- **Routing**: React Router DOM 7
+- **Styling**: Tailwind CSS 4
+- **Build Tool**: Vite 5
+
+## 프로젝트 구조
+
+```
+src/
+├── components/         # 재사용 가능한 컴포넌트
+│   ├── ui/            # 기본 UI 컴포넌트
+│   ├── auth/          # 인증 관련 컴포넌트
+│   ├── layout/        # 레이아웃 컴포넌트
+│   └── meal/          # 식단 관련 컴포넌트
+├── pages/             # 페이지 컴포넌트
+│   ├── auth/          # 인증 페이지
+│   └── [other pages]  # 기타 페이지
+├── contexts/          # React Context
+├── hooks/            # 커스텀 훅
+├── lib/              # 유틸리티 및 API
+└── App.tsx           # 메인 앱 컴포넌트
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 개발 환경 설정
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. 의존성 설치
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. 환경 변수 설정
+`.env.example`을 복사하여 `.env` 파일을 생성하고 필요한 값을 설정:
+```bash
+cp .env.example .env
+```
 
-## Learn More
+### 3. 개발 서버 실행
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+앱이 `http://localhost:3000`에서 실행됩니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 스크립트
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `pnpm dev` - 개발 서버 실행
+- `pnpm build` - 프로덕션 빌드
+- `pnpm start` - 프로덕션 미리보기
+- `pnpm lint` - ESLint 실행
 
-## Deploy on Vercel
+## API 구성
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+애플리케이션은 REST API와 통신합니다. 기본 API URL은 환경 변수로 설정할 수 있습니다:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 개발환경: `http://localhost:8000/api`
+- 프로덕션: 환경 변수로 설정
+
+### API 엔드포인트
+
+- `POST /auth/login` - 로그인
+- `POST /auth/register` - 회원가입  
+- `POST /auth/logout` - 로그아웃
+- `GET /auth/me` - 현재 사용자 정보
+- `GET /meals?date=YYYY-MM-DD` - 특정 날짜 식단 조회
+- `GET /nutrition?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` - 영양정보 조회
+
+## 주요 기능
+
+- 🔐 **인증**: 한국기술교육대학교 이메일 기반 로그인/회원가입
+- 🍱 **식단 조회**: 날짜별, 시간대별 식단 정보 확인
+- 📊 **영양 분석**: 주간/월간 영양 섭취 현황 분석
+- 👤 **사용자 관리**: 프로필 및 설정 관리
+- 📱 **반응형 디자인**: 모바일 우선 디자인
+
+## 브라우저 호환성
+
+- Chrome (최신)
+- Firefox (최신)  
+- Safari (최신)
+- Edge (최신)

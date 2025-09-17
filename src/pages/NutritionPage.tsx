@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-
-interface NutritionData {
-  date: string;
-  totalCalories: number;
-  meals: {
-    breakfast: number;
-    lunch: number;
-    dinner: number;
-  };
-}
+import { nutritionApi, type NutritionData } from "@/lib/api";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ErrorState from "@/components/ui/ErrorState";
 
 export default function NutritionPage() {
   const { user } = useAuth();
@@ -18,38 +11,45 @@ export default function NutritionPage() {
     "week"
   );
   const [nutritionData, setNutritionData] = useState<NutritionData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - 실제로는 API에서 가져와야 함
+  // 영양정보 데이터 로드
   useEffect(() => {
-    const mockData: NutritionData[] = [
-      {
-        date: "2025-01-01",
-        totalCalories: 2245,
-        meals: { breakfast: 0, lunch: 885, dinner: 880 },
-      },
-      {
-        date: "2025-01-02",
-        totalCalories: 2536,
-        meals: { breakfast: 780, lunch: 878, dinner: 878 },
-      },
-      {
-        date: "2025-01-03",
-        totalCalories: 2546,
-        meals: { breakfast: 782, lunch: 881, dinner: 881 },
-      },
-      {
-        date: "2025-01-04",
-        totalCalories: 1748,
-        meals: { breakfast: 0, lunch: 883, dinner: 884 },
-      },
-      {
-        date: "2025-01-05",
-        totalCalories: 1754,
-        meals: { breakfast: 0, lunch: 877, dinner: 877 },
-      },
-    ];
-    setNutritionData(mockData);
-  }, []);
+    const fetchNutritionData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // 기간에 따라 시작일과 종료일 계산
+        const endDate = new Date();
+        const startDate = new Date();
+        
+        if (selectedPeriod === "week") {
+          startDate.setDate(endDate.getDate() - 7);
+        } else {
+          startDate.setDate(endDate.getDate() - 30);
+        }
+        
+        const data = await nutritionApi.getNutritionData(
+          startDate.toISOString().split('T')[0],
+          endDate.toISOString().split('T')[0]
+        );
+        
+        setNutritionData(data);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "영양정보를 가져오는데 실패했습니다.";
+        setError(errorMessage);
+        console.error('영양정보 로드 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchNutritionData();
+    }
+  }, [selectedPeriod, user]);
 
   const totalWeekCalories = nutritionData.reduce(
     (sum, day) => sum + day.totalCalories,
@@ -71,6 +71,21 @@ export default function NutritionPage() {
           </Link>
         </div>
       </div>
+    );
+  }
+
+  if (loading) {
+    return <LoadingSpinner message="영양정보를 불러오는 중..." />;
+  }
+
+  if (error) {
+    return (
+      <ErrorState
+        icon="📊"
+        title="영양정보를 불러올 수 없어요"
+        description={error}
+        onRetry={() => window.location.reload()}
+      />
     );
   }
 
@@ -235,19 +250,31 @@ export default function NutritionPage() {
           <div className="text-center p-4 bg-red-50 rounded-xl">
             <div className="text-2xl mb-2">🍖</div>
             <h3 className="font-semibold text-gray-800">단백질</h3>
-            <p className="text-xl font-bold text-red-600">18%</p>
+            <p className="text-xl font-bold text-red-600">
+              {nutritionData.length > 0 
+                ? Math.round(nutritionData.reduce((sum, day) => sum + (day.nutrients?.protein || 0), 0) / nutritionData.length) 
+                : 0}%
+            </p>
             <p className="text-xs text-gray-500">일일 권장량 대비</p>
           </div>
           <div className="text-center p-4 bg-yellow-50 rounded-xl">
             <div className="text-2xl mb-2">🍞</div>
             <h3 className="font-semibold text-gray-800">탄수화물</h3>
-            <p className="text-xl font-bold text-yellow-600">65%</p>
+            <p className="text-xl font-bold text-yellow-600">
+              {nutritionData.length > 0 
+                ? Math.round(nutritionData.reduce((sum, day) => sum + (day.nutrients?.carbs || 0), 0) / nutritionData.length) 
+                : 0}%
+            </p>
             <p className="text-xs text-gray-500">일일 권장량 대비</p>
           </div>
           <div className="text-center p-4 bg-blue-50 rounded-xl">
             <div className="text-2xl mb-2">🥑</div>
             <h3 className="font-semibold text-gray-800">지방</h3>
-            <p className="text-xl font-bold text-blue-600">17%</p>
+            <p className="text-xl font-bold text-blue-600">
+              {nutritionData.length > 0 
+                ? Math.round(nutritionData.reduce((sum, day) => sum + (day.nutrients?.fat || 0), 0) / nutritionData.length) 
+                : 0}%
+            </p>
             <p className="text-xs text-gray-500">일일 권장량 대비</p>
           </div>
         </div>

@@ -1,14 +1,29 @@
-import { useState, useEffect, useCallback } from "react";
+import { useApi } from './useApi';
+import { apiClient, type Meal } from '@/lib/api';
+import { formatDate } from '@/utils/date';
+import type { ApiResponse } from '@/types';
 
-interface Meal {
-  date: string;
-  dining_time: string;
-  place: string;
-  price: string;
-  kcal: string;
-  menu: string[];
+interface UseMealsOptions {
+  enabled?: boolean;
+  staleTime?: number;
 }
 
+export function useMeals(date: string | Date, options: UseMealsOptions = {}) {
+  const formattedDate = typeof date === 'string' ? date : formatDate(date);
+  
+  return useApi<Meal[]>(
+    (): Promise<ApiResponse<Meal[]>> => apiClient.get<Meal[]>(`/meals?date=${formattedDate}`),
+    {
+      enabled: !!formattedDate && (options.enabled ?? true),
+      staleTime: options.staleTime ?? 5 * 60 * 1000, // 5분
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      retries: 2,
+    }
+  );
+}
+
+// 호환성을 위한 레거시 인터페이스
 interface UseMealsReturn {
   meals: Meal[];
   loading: boolean;
@@ -16,52 +31,13 @@ interface UseMealsReturn {
   refetch: () => void;
 }
 
-export function useMeals(date: string): UseMealsReturn {
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchMeals = useCallback(async () => {
-    if (!date) {
-      return;
-    }
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`http://localhost:8080/api/meals?date=${date}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      setMeals(data);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "데이터를 가져오는 중 오류가 발생했습니다.";
-      setError(errorMessage);
-      setMeals([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [date]);
-
-  useEffect(() => {
-    fetchMeals();
-  }, [fetchMeals]);
-
+export function useMealsLegacy(date: string): UseMealsReturn {
+  const { data, isLoading, error, refetch } = useMeals(date);
+  
   return {
-    meals,
-    loading,
+    meals: data || [],
+    loading: isLoading,
     error,
-    refetch: fetchMeals,
+    refetch,
   };
 }
