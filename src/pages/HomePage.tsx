@@ -15,7 +15,8 @@ export default function HomePage() {
   const [selectedTime, setSelectedTime] = useState<string>("all");
   const { user } = useAuth();
 
-  const { meals, loading, error, refetch } = useMeals(selectedDate);
+  const { data, isLoading, error, refetch } = useMeals(selectedDate);
+  const meals = data || [];
 
   const filteredMeals =
     selectedTime === "all"
@@ -53,7 +54,7 @@ export default function HomePage() {
           </div>
 
           <div className="max-w-7xl mx-auto p-4">
-            {loading && (
+            {isLoading && (
               <LoadingSpinner
                 size="lg"
                 message="맛있는 식단을 불러오는 중..."
@@ -69,7 +70,7 @@ export default function HomePage() {
               />
             )}
 
-            {!loading && !error && (
+            {!isLoading && !error && (
               <div className="space-y-4">
                 {filteredMeals.length === 0 ? (
                   <EmptyState

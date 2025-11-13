@@ -1,27 +1,18 @@
 import { type Meal } from "@/lib/api";
+import { DINING_TIME_LABELS } from "@/constants";
 
 interface MealCardProps {
   meal: Meal;
 }
 
 export default function MealCard({ meal }: MealCardProps) {
-  const diningTimeLabels = {
-    breakfast: "조식",
-    lunch: "중식",
-    dinner: "석식",
-  };
-
   return (
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform">
       {/* Card Header */}
       <div className="bg-gradient-to-r from-orange-400 to-red-400 text-white p-4 rounded-t-2xl">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-bold">
-            {
-              diningTimeLabels[
-                meal.dining_time as keyof typeof diningTimeLabels
-              ]
-            }
+            {DINING_TIME_LABELS[meal.dining_time]}
           </h2>
         </div>
         <div className="flex gap-2 text-xs flex-wrap">

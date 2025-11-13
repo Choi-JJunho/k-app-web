@@ -8,9 +8,15 @@ interface UseMealsOptions {
   staleTime?: number;
 }
 
+/**
+ * Fetches meals data for a given date
+ * @param date - Date string (YYYY-MM-DD) or Date object
+ * @param options - Optional configuration for the API call
+ * @returns Object with data (Meal[]), isLoading, error, and refetch function
+ */
 export function useMeals(date: string | Date, options: UseMealsOptions = {}) {
   const formattedDate = typeof date === 'string' ? date : formatDate(date);
-  
+
   return useApi<Meal[]>(
     (): Promise<ApiResponse<Meal[]>> => apiClient.get<Meal[]>(`/meals?date=${formattedDate}`),
     {
@@ -21,23 +27,4 @@ export function useMeals(date: string | Date, options: UseMealsOptions = {}) {
       retries: 2,
     }
   );
-}
-
-// 호환성을 위한 레거시 인터페이스
-interface UseMealsReturn {
-  meals: Meal[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
-
-export function useMealsLegacy(date: string): UseMealsReturn {
-  const { data, isLoading, error, refetch } = useMeals(date);
-  
-  return {
-    meals: data || [],
-    loading: isLoading,
-    error,
-    refetch,
-  };
 }

@@ -1,4 +1,6 @@
 import CustomDatePicker from "../ui/CustomDatePicker";
+import { DINING_TIME_LABELS } from "@/constants";
+import type { MealTimeType } from "@/types";
 
 interface MealFiltersProps {
   selectedDate: string;
@@ -13,11 +15,7 @@ export default function MealFilters({
   onDateChange,
   onTimeChange,
 }: MealFiltersProps) {
-  const diningTimeLabels = {
-    breakfast: "조식",
-    lunch: "중식",
-    dinner: "석식",
-  };
+  const timeOptions = Object.keys(DINING_TIME_LABELS) as MealTimeType[];
 
   return (
     <>
@@ -42,9 +40,7 @@ export default function MealFilters({
         >
           전체
         </button>
-        {(
-          Object.keys(diningTimeLabels) as Array<keyof typeof diningTimeLabels>
-        ).map((time) => (
+        {timeOptions.map((time) => (
           <button
             key={time}
             onClick={() => onTimeChange(time)}
@@ -54,7 +50,7 @@ export default function MealFilters({
                 : "bg-white text-gray-600 border border-gray-200 hover:bg-orange-50"
             }`}
           >
-            {diningTimeLabels[time]}
+            {DINING_TIME_LABELS[time]}
           </button>
         ))}
       </div>

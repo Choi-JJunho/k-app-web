@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { nutritionApi, type NutritionData } from "@/lib/api";
+import { useNutrition } from "@/hooks/useNutrition";
+import { RECOMMENDED_DAILY_CALORIES } from "@/constants";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import ErrorState from "@/components/ui/ErrorState";
 
@@ -10,53 +11,21 @@ export default function NutritionPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">(
     "week"
   );
-  const [nutritionData, setNutritionData] = useState<NutritionData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // 영양정보 데이터 로드
-  useEffect(() => {
-    const fetchNutritionData = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // 기간에 따라 시작일과 종료일 계산
-        const endDate = new Date();
-        const startDate = new Date();
-        
-        if (selectedPeriod === "week") {
-          startDate.setDate(endDate.getDate() - 7);
-        } else {
-          startDate.setDate(endDate.getDate() - 30);
-        }
-        
-        const data = await nutritionApi.getNutritionData(
-          startDate.toISOString().split('T')[0],
-          endDate.toISOString().split('T')[0]
-        );
-        
-        setNutritionData(data);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "영양정보를 가져오는데 실패했습니다.";
-        setError(errorMessage);
-        console.error('영양정보 로드 실패:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data, isLoading, error, refetch } = useNutrition({
+    period: selectedPeriod,
+    enabled: !!user,
+  });
 
-    if (user) {
-      fetchNutritionData();
-    }
-  }, [selectedPeriod, user]);
-
+  const nutritionData = data || [];
   const totalWeekCalories = nutritionData.reduce(
     (sum, day) => sum + day.totalCalories,
     0
   );
-  const avgDailyCalories = Math.round(totalWeekCalories / nutritionData.length);
-  const recommendedCalories = 2200; // 권장 칼로리
+  const avgDailyCalories = nutritionData.length > 0
+    ? Math.round(totalWeekCalories / nutritionData.length)
+    : 0;
+  
 
   if (!user) {
     return (
@@ -74,7 +43,7 @@ export default function NutritionPage() {
     );
   }
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingSpinner message="영양정보를 불러오는 중..." />;
   }
 
@@ -84,7 +53,7 @@ export default function NutritionPage() {
         icon="📊"
         title="영양정보를 불러올 수 없어요"
         description={error}
-        onRetry={() => window.location.reload()}
+        onRetry={refetch}
       />
     );
   }
@@ -137,7 +106,7 @@ export default function NutritionPage() {
             <span className="text-2xl">🎯</span>
           </div>
           <p className="text-2xl font-bold text-blue-600">
-            {Math.round((avgDailyCalories / recommendedCalories) * 100)}%
+            {Math.round((avgDailyCalories / RECOMMENDED_DAILY_CALORIES) * 100)}%
           </p>
           <p className="text-xs text-gray-500">목표 달성률</p>
         </div>
@@ -178,7 +147,7 @@ export default function NutritionPage() {
                       className="bg-gradient-to-r from-orange-400 to-red-400 h-2 rounded-full transition-all duration-500"
                       style={{
                         width: `${Math.min(
-                          (day.totalCalories / recommendedCalories) * 100,
+                          (day.totalCalories / RECOMMENDED_DAILY_CALORIES) * 100,
                           100
                         )}%`,
                       }}
