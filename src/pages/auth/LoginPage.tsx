@@ -22,7 +22,7 @@ export default function LoginPage() {
     const fullEmail = `${emailPrefix}@koreatech.ac.kr`;
 
     try {
-      await login(fullEmail, password);
+      await login({ email: fullEmail, password });
       navigate("/"); // 로그인 후 메인 페이지로 리다이렉트
     } catch (err) {
       setError(err instanceof Error ? err.message : "로그인에 실패했습니다.");

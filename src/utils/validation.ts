@@ -1,6 +1,6 @@
 import type { FormFieldError } from '@/types';
 
-export type ValidationRule<T = any> = (value: T) => FormFieldError | null;
+export type ValidationRule<T = unknown> = (value: T) => FormFieldError | null;
 
 export const createValidationRule = <T>(
   type: FormFieldError['type'],
